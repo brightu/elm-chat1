@@ -1,0 +1,460 @@
+# elm.chat
+
+[Changelog](CHANGELOG.md) · [Latest release](https://github.com/shawnbure/elm-chat/releases/latest)
+
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](LICENSE)
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://elm.chat/deploy/cloudflare?source=github-readme)
+[![Built with Cloudflare](https://workers.cloudflare.com/built-with-cloudflare.svg)](https://elm.chat/building-ephemeral-chat-cloudflare)
+[![Stars](https://img.shields.io/github/stars/shawnbure/elm-chat?style=social)](https://github.com/shawnbure/elm-chat/stargazers)
+[![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+[![GitHub Discussions](https://img.shields.io/github/discussions/shawnbure/elm-chat?label=discussions)](https://github.com/shawnbure/elm-chat/discussions)
+
+> **Instant chat. Account-free, encrypted, fast and disposable.** End-to-end encrypted rooms that self-destruct, with no persisted server-side transcript. This early-stage release has not had an independent security audit.
+
+![elm.chat two-user demo — create a room, share a single-use invite, exchange end-to-end encrypted messages, then destroy the room](docs/images/elm-chat-demo.gif)
+
+*A real two-person session: create a room, hand off a single-use invite, exchange encrypted messages, and destroy the room for both participants.*
+
+## Choose your path
+
+| I want to… | Start here |
+| --- | --- |
+| Try the product | [Create a disposable room](https://elm.chat/?source=github-readme), invite exactly one person, and exchange a low-risk test message. |
+| Run my own instance | [Deploy to Cloudflare](https://elm.chat/deploy/cloudflare?source=github-readme) or follow the [manual deployment guide](#deploy-to-cloudflare). |
+| Review the claims | Read the [security status](https://elm.chat/security-and-limitations), [threat model](docs/threat-model.md), and [architecture](docs/architecture.md). |
+| Help build it | Pick one of the scoped [good first issues](https://github.com/shawnbure/elm-chat/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22good%20first%20issue%22) or read [CONTRIBUTING.md](CONTRIBUTING.md). |
+
+If elm.chat is worth revisiting, use GitHub's **Star** button above. Stars are the public signal that helps other open-source users find the project.
+
+## Try it with one person
+
+You can test the complete handoff in about a minute with someone you already know:
+
+1. Open [elm.chat](https://elm.chat/?source=github-readme) and create a room.
+2. Click **Send invite** (or **Invite one person** where native sharing is unavailable). Choose a share target, or use **Copy invite link** on the single-use invite.
+3. Send that invite to one person through a separate channel if you copied it.
+4. Ask them to open it, exchange a low-risk test message, and destroy the room when you are done.
+
+The invite expires and can only be used once. Start with non-critical information: elm.chat is early-stage, has not had an independent security audit, and is not intended for anonymous, high-risk, regulated, or production-finance communication. Read the [security status and limitations](https://elm.chat/security-and-limitations) before relying on it.
+
+`elm.chat` is an open effort to build a messaging system for people who need privacy by default, operational simplicity, and as little server trust as possible.
+
+This repository is for builders, reviewers, security researchers, and contributors who want to help push the project toward a genuinely minimal-footprint private communication model.
+
+New here? Start with the public [try, review, or contribute guide](https://github.com/shawnbure/elm-chat/discussions/42), ask a question in [Discussions](https://github.com/shawnbure/elm-chat/discussions), or choose a scoped [good first issue](https://github.com/shawnbure/elm-chat/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22good%20first%20issue%22).
+
+Try [elm.chat](https://elm.chat/?source=github-readme), review its [public security status and limitations](https://elm.chat/security-and-limitations), open the [press and media kit](https://elm.chat/press), read why [the internet needs places that are allowed to forget](https://elm.chat/the-internet-needs-places-that-forget) or [why I built a messenger designed to disappear](https://elm.chat/why-i-built-elm-chat), learn what [self-destructing chat should actually mean](https://elm.chat/self-destructing-chat), follow the practical guides to [sending a password without leaving it in chat history](https://elm.chat/send-a-password-securely) and [sending a file without creating another attachment archive](https://elm.chat/send-a-file-securely), compare a [one-time secret with a disposable chat](https://elm.chat/one-time-secret-chat), create a [temporary private chat without signup](https://elm.chat/temporary-private-chat), choose a [communication channel for a journalist and source](https://elm.chat/journalist-source-communication), examine why [deletion is a distributed-systems contract](https://elm.chat/deletion-distributed-systems-contract), explore the [Cloudflare Durable Objects architecture](https://elm.chat/building-ephemeral-chat-cloudflare), see how [WebSocket hibernation works without a chat database](https://elm.chat/durable-objects-websocket-hibernation), or build [single-use invite links as explicit capabilities](https://elm.chat/single-use-invite-links).
+
+Subscribe to the [RSS feed](https://elm.chat/feed.xml) for new articles and technical notes.
+
+## Run your own in one click
+
+elm.chat is Cloudflare-native, so you can fork and self-host a full private instance in about a minute — Cloudflare clones the repo into your account and provisions the Durable Objects for you:
+
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://elm.chat/deploy/cloudflare?source=github-readme)
+
+Tried the self-host path? [Share a successful deployment or the exact blocker](https://github.com/shawnbure/elm-chat/discussions/97). Self-hosted instances send no analytics back to elm.chat, so this opt-in report is the only reliable way to improve the path for the next operator.
+
+Prefer to do it by hand? See [Deploy to Cloudflare](#deploy-to-cloudflare) below and the [deployment verification checklist](docs/deploy-to-cloudflare-verification.md). Want to contribute instead of just run it? Start with [CONTRIBUTING.md](CONTRIBUTING.md) and the [good first issues](docs/GOOD-FIRST-ISSUES.md).
+
+![elm.chat landing page](docs/images/landing-page.jpg)
+
+## What People See
+
+The product is intentionally small and direct.
+
+On the landing screen, a visitor sees:
+
+- the core message: `Instant chat. Account-free, encrypted, fast and disposable.`
+- a message vanish control with minutes, hours, days, or indefinite
+- a room self-destruct control with minutes, hours, days, or indefinite
+- a `Create private conversation` action
+- a note that the room secret stays in the URL fragment and does not normally reach the server
+- a quick summary panel for access, message policy, and room policy
+- up to five recently closed GitHub issues and five open requests, with links to add a thumbs-up reaction on GitHub
+
+Inside a room, people see:
+
+- a short room code
+- the configured vanish and self-destruct rules
+- live presence count
+- color identity chips instead of usernames
+- encrypted message bubbles keyed by participant color
+- creator-only `Send invite` (or `Invite one person`) and `Destroy` controls
+- single-use invite links instead of a permanent reusable room invite
+- creator ability to revoke invites and remove participants
+- a single composer for fast message entry
+- encrypted file sharing that streams over the encrypted relay and vanishes on the same policy as messages
+- a room that is meant to disappear instead of becoming a permanent archive
+
+The interface is meant to feel immediate, readable, and disposable. It should communicate privacy without turning the user experience into a configuration maze.
+
+The interactive room shell supports English and Spanish from the browser's language preferences, with English as the fallback. The longer articles remain in English. The GitHub activity panel uses a same-origin Worker endpoint with a short cache; voting happens on GitHub and requires a GitHub account.
+
+## Intent
+
+The intent of this application is straightforward:
+
+- footprint-less
+- log-less
+- no-server transcript authority
+- no man in the middle with readable content
+- no readable content in the middle
+- end-to-end encryption
+- disposable rooms that die on purpose
+
+Those are the design goals. They matter because a private chat app should not ask users to trust infrastructure any more than absolutely necessary.
+
+This project is trying to move toward a system where:
+
+- the server coordinates live transport but is not the source of truth for message history
+- clients hold the transcript
+- rooms are short-lived and aggressively self-destruct
+- capability links and end-to-end encryption reduce account, identity, and metadata exposure
+
+## Current Direction
+
+The shipping implementation is built around:
+
+- a Cloudflare Worker serving the app and API, plus one Durable Object per room
+- room secrets kept in the URL fragment so they do not reach the server in normal requests
+- end-to-end encrypted message payloads (AES-GCM under a room key derived in the browser)
+- **encrypted content relayed — never stored — through the room's Durable Object over a single WebSocket**, so the server only ever sees ciphertext
+- end-to-end encrypted, chunked file sharing over that same relay
+- creator-issued single-use invite links, invite revocation, and participant removal
+- optional invisible Cloudflare Turnstile on room creation (inert until keys are configured)
+- a disposable room lifecycle (idle + max-age self-destruct, manual destroy) instead of permanent storage
+
+### Why relay instead of peer-to-peer
+
+elm-chat does not use WebRTC peer-to-peer transport, and it contacts no STUN or TURN servers. Relaying encrypted payloads through the Durable Object is a deliberate choice: it keeps every participant's IP address private from other room members (naive WebRTC would leak peer IPs via ICE), needs no TURN server, and works reliably on mobile and restrictive networks. The trade-off is that the honest-but-curious server relays ciphertext and can observe connection metadata (timing, sizes, presence).
+
+The long-term direction may add an optional direct-peer transport for participants who accept the IP-exposure trade-off, plus sender identity verification using the ephemeral identity keys already exchanged on join.
+
+If you are contributing, treat the phrases "footprint-less", "log-less", and "no-server" as the product standard we are aiming toward, not as a slogan. See [docs/architecture.md](docs/architecture.md) and [docs/threat-model.md](docs/threat-model.md) for the precise current model.
+
+## What This Is For
+
+`elm.chat` is an early-stage experiment for ordinary, low-risk conversations between people who already know and trust one another but do not want another permanent chat archive.
+
+It may be useful for:
+
+- a short-lived personal conversation
+- live coordination that should not become a searchable channel history
+- a temporary password or file handoff where both participants can verify one another through another channel
+- developers studying or self-hosting a small encrypted WebSocket application
+
+It is **not** an anonymity system, an independently audited high-risk communications channel, a whistleblower drop box, a compliance product, or production-ready financial infrastructure. Use purpose-built, independently reviewed systems for regulated, anonymous, adversarial, or high-risk communication.
+
+The point is not just to encrypt message content. It is to explore how much unnecessary server-side retention a small communication system can avoid while stating the remaining risks plainly.
+
+## Why Cloudflare
+
+Cloudflare is useful here because it lets a small project run a globally distributed real-time application without maintaining servers.
+
+For this project specifically, Cloudflare provides:
+
+- Workers for the HTTP edge runtime
+- Durable Objects for per-room coordination and lifecycle control
+- static asset hosting for the client app
+- a free entry point for developers who want to experiment or contribute
+
+As of April 10, 2026, Cloudflare documents that:
+
+- Durable Objects are available on the Workers Free plan
+- the Workers Free plan includes limited daily usage
+- SQLite-backed Durable Objects are the supported backend on the free tier
+
+Official references:
+
+- [Cloudflare Durable Objects overview](https://developers.cloudflare.com/durable-objects/)
+- [Cloudflare Durable Objects pricing](https://developers.cloudflare.com/durable-objects/platform/pricing/)
+- [Cloudflare Workers pricing](https://developers.cloudflare.com/workers/platform/pricing/)
+
+## Deploy to Cloudflare
+
+This is the complete, end-to-end guide to running your own elm.chat instance on Cloudflare. The whole app is a single Cloudflare Worker: it serves the static React app **and** the API, and coordinates each room with a Durable Object. There is no separate database, server, or STUN/TURN service to run.
+
+### What you need
+
+- A **Cloudflare account** (the free plan is enough) — [sign up](https://dash.cloudflare.com/sign-up).
+- **Node.js 18+** and npm.
+- **Git**.
+
+No paid add-ons are required. SQLite-backed Durable Objects (what this project uses) are available on the Workers Free plan.
+
+### Option A — one click
+
+1. Click **[Deploy to Cloudflare](https://elm.chat/deploy/cloudflare?source=github-readme)**.
+2. Choose your GitHub account and authorize Cloudflare to create a copy of the repository and connect it to Workers Builds.
+3. Confirm the project name and whether the new repository should be private.
+4. Deploy. Cloudflare detects the root `wrangler.jsonc`, runs the repository's build and deploy scripts, and provisions the Worker and Durable Object namespace.
+5. Open the generated `*.workers.dev` URL and create a low-risk test room.
+6. Run the [deployment verification checklist](docs/deploy-to-cloudflare-verification.md) before sharing the instance.
+
+#### What Cloudflare should detect
+
+The repository includes a root deploy-button configuration specifically because
+Cloudflare does not fully support automatic monorepo detection. The setup screen
+should recognize `wrangler.jsonc` and use the root `package.json` scripts:
+
+- **Build command:** `npm run build`
+- **Deploy command:** `npm run deploy`
+- **Root directory:** `/` (repo root)
+
+If the setup screen says **No Wrangler configuration detected**, stop before
+deploying and [open a deployment issue](https://github.com/shawnbure/elm-chat/issues/new?template=bug_report.md). That message means Cloudflare is falling back to automatic project configuration instead of the reviewed Worker, assets, and Durable Object bindings.
+
+If the hosted build fails for any reason, use Option B — it is the fully tested path.
+
+### Option B — manual deploy with Wrangler (recommended)
+
+```bash
+# 1. Clone and install
+git clone https://github.com/shawnbure/elm-chat.git
+cd elm-chat
+npm install
+
+# 2. Authenticate Wrangler (opens a browser)
+npx wrangler login
+
+# 3. (If your Cloudflare login has more than one account) pick the target.
+#    This project-scoped variable maps to Wrangler's account for deploys,
+#    so it won't clobber CLOUDFLARE_ACCOUNT_ID for your other projects.
+export ELM_CHAT_CLOUDFLARE_ACCOUNT_ID=<your-account-id>
+
+# 4. Build the web app and deploy the Worker + Durable Object (one command)
+npm run deploy
+```
+
+`npm run deploy` (run from the repo root) builds `apps/web/dist` and then deploys the Worker. On success, Wrangler prints your live URL, e.g. `https://elm-chat.<your-subdomain>.workers.dev`. Open it, click **Create private conversation**, and you have a working room.
+
+Notes:
+
+- **Choosing an account.** `wrangler.jsonc` intentionally does **not** hardcode an `account_id`, so it deploys to whatever account you logged in with. If your login has access to more than one account, set **`ELM_CHAT_CLOUDFLARE_ACCOUNT_ID`** (find the id under **Workers & Pages → Account details** in the dashboard). The `deploy` script maps it to the `CLOUDFLARE_ACCOUNT_ID` Wrangler expects, so it stays scoped to this project. If you already export the standard `CLOUDFLARE_ACCOUNT_ID`, that is used as a fallback.
+- **workers.dev subdomain.** The first time you deploy to an account, Cloudflare may ask you to register a free `*.workers.dev` subdomain (in the dashboard under **Workers & Pages**). Do that once, then re-run `npm run deploy`.
+- **Durable Object migration.** The `migrations` block in `wrangler.jsonc` creates the `RoomDurableObject` SQLite class automatically on first deploy — no manual step.
+- **Two checked Wrangler entry points.** Root `wrangler.jsonc` is the Deploy-to-Cloudflare entry point; `workers/api/wrangler.jsonc` remains the production/API workspace entry point. The root template intentionally omits elm.chat's optional growth-measurement dataset because Cloudflare does not list Analytics Engine among the resources its deploy button auto-provisions. Self-hosted instances work without that dataset and do not send elm.chat growth events. `npm run check:wrangler-configs` fails if the runtime resources or resolved paths drift.
+- **Maintainer production deployment.** The hosted `elm.chat` instance uses `npm run deploy:production`, which selects `workers/api/wrangler.jsonc` and preserves the optional aggregate Analytics Engine binding. Independent self-hosters should continue to use `npm run deploy`; it intentionally uses the smaller public template.
+- **Renaming.** To run multiple instances or avoid a name clash, change `"name"` in both Wrangler configuration files before deploying.
+- **Redeploying after changes.** Just run `npm run deploy` again — it rebuilds `apps/web/dist` before deploying.
+
+### Optional — custom domain
+
+To serve the app from your own domain instead of `*.workers.dev`:
+
+1. Add the domain to your Cloudflare account (it must use Cloudflare DNS).
+2. In the dashboard: **Workers & Pages → your Worker → Settings → Domains & Routes → Add custom domain**, or add a `routes` entry to `wrangler.jsonc` and redeploy. Cloudflare provisions the TLS certificate automatically.
+
+### Optional — abuse protection (Turnstile)
+
+Room creation can be gated by an invisible Cloudflare Turnstile challenge. It is off until you add keys, so the steps above work without it. See [Abuse Prevention (Turnstile)](#abuse-prevention-turnstile) below for the two-step setup.
+
+### Verify it works
+
+1. Open your deployed URL and create a room.
+2. Click **Send invite** (or **Invite one person**), copy the single-use invite if needed, then open it in a second browser or an incognito window to confirm two participants can exchange encrypted messages and files.
+3. Optional: watch live logs with `npx wrangler tail` from `workers/api`.
+
+For release or configuration changes, use the fuller [Deploy-to-Cloudflare verification checklist](docs/deploy-to-cloudflare-verification.md).
+
+### Free-tier expectations
+
+- keep rooms short-lived
+- keep storage minimal
+- expect daily usage ceilings on the free plan
+- prefer aggressive message expiry and room self-destruct
+- large or frequent file transfers consume more of your Workers/Durable Object budget, since file chunks are relayed through the Worker
+
+That matches the philosophy of the project anyway.
+
+### Troubleshooting
+
+- **`Missing entry-point` / assets error on deploy** — you didn't build first. Run `npm run build` from the repo root, then `wrangler deploy` from `workers/api`.
+- **`More than one account available`** — set `ELM_CHAT_CLOUDFLARE_ACCOUNT_ID` (see above), then re-run `npm run deploy`.
+- **`workers.dev` URL returns 404 or won't register** — register your workers.dev subdomain in the dashboard, then redeploy.
+- **Room says "Room not found" right after creating it** — you're pointing the web app at a different Worker than the one that created the room (usually a stale local dev setup). In production this is one Worker, so it does not occur.
+
+## Local Development
+
+The app runs as two processes in development:
+
+- the Cloudflare Worker + Durable Object under `wrangler dev` on `http://localhost:8799` (a dedicated port set in `workers/api/wrangler.jsonc` so it never collides with other Cloudflare projects that default to `8787`)
+- the Vite dev server (React app, hot reload) on `http://localhost:3000`
+
+Vite proxies `/api` (including the room WebSocket) to the Worker, so the app behaves exactly like production, where a single Worker serves both the static assets and the API.
+
+First-time setup:
+
+1. `npm install`
+2. `npm run build` once (creates `apps/web/dist`, which `wrangler dev` expects)
+
+Then, to run everything with one command:
+
+```
+npm run dev
+```
+
+Open `http://localhost:3000`. Create a room, then open the copied link (or an invite link) in a second browser/tab to see live encrypted chat between participants.
+
+### Running from VS Code
+
+Two entry points are provided in `.vscode/`:
+
+- **Run without a debugger** — open the Command Palette → `Tasks: Run Task` → `dev` (also bound to the default build task, `Cmd/Ctrl+Shift+B`). This starts both servers and opens elm.chat in your **default browser**.
+- **Run with the debugger** — press `F5` and pick `Debug: elm.chat (Chrome)` or `Debug: elm.chat (Edge)`. This starts both servers and launches the chosen browser attached to the VS Code debugger, so breakpoints in the React/TypeScript source work. (VS Code's JavaScript debugger supports Chrome and Edge only; for other browsers use the no-debugger task above.)
+
+## Abuse Prevention (Turnstile)
+
+Room creation can be gated by [Cloudflare Turnstile](https://developers.cloudflare.com/turnstile/), a privacy-preserving bot check with no cookies, no cross-site tracking, and no persistent user identity. It is optional and stays off until you configure keys, so local dev and unconfigured deploys keep working.
+
+To enable it:
+
+1. In the Cloudflare dashboard, create a Turnstile widget (Managed or Invisible mode) for your domain. You get a **site key** (public) and a **secret key** (private).
+2. Give the web build the site key:
+   `VITE_TURNSTILE_SITE_KEY=<site-key> npm run build`
+   (or add it to a `.env` file under `apps/web`).
+3. Give the Worker the secret:
+   `cd workers/api && npx wrangler secret put TURNSTILE_SECRET`
+
+With both set, the landing page runs an invisible challenge before creating a room, and the Worker rejects room creation unless the token verifies. With neither set, creation is open.
+
+## No Third-Party Tracking
+
+elm.chat ships with **no third-party analytics, no third-party beacons, and no third-party scripts** on any page. A strict `Content-Security-Policy` with `script-src 'self'` is applied to every route, so the browser cannot load an external tracker even if one were added by mistake. The only network calls a visitor's browser makes are to elm.chat's own origin. (The GitHub star count on the landing is fetched server-side by the Worker, so visitors' browsers never contact GitHub.)
+
+The hosted `elm.chat` service can send optional same-origin growth events to `/api/growth`, and the production Worker can write aggregate counters to a Cloudflare Analytics Engine dataset. The browser payload is limited to `event` and an enumerated `source`; the Worker writes only event name, source, and count. These counters are intended to measure public funnel behavior such as article CTAs, invite handoff, and GitHub interest. They must not include room IDs, room secrets, invite tokens, creator tokens, session IDs, identity keys, IP addresses, filenames, message/file content, or durable relationship identifiers. `npm run check:growth-privacy` fails if the client payload, growth route, or Analytics Engine write drifts toward those fields.
+
+The public self-host `wrangler.jsonc` intentionally omits the `GROWTH` Analytics Engine binding. Independent instances deployed from that template do not send analytics to elm.chat. The maintainer production dataset is accessible to the Cloudflare account operators for this hosted instance; exact retention for that aggregate dataset is not yet independently verified. This first-party measurement does not make elm.chat anonymous, audited, compliant, suitable for regulated/high-risk use, or free from ordinary relay metadata.
+
+## Durable Object Lifecycle
+
+Each room is coordinated by a dedicated Durable Object instance.
+
+That object is responsible for:
+
+- join and presence coordination
+- live room event transport
+- room policy enforcement
+- timed expiration
+- explicit destroy actions
+
+The room is not meant to become a permanent mailbox.
+
+The intended room behavior is:
+
+- create fast
+- coordinate live participants
+- self-destruct on inactivity or explicit destroy
+- leave as little behind as possible
+
+In practical terms, a room should act more like a volatile coordination envelope than a permanent database row.
+
+## Access Model
+
+Room access is no longer meant to rely on a broad reusable room link.
+
+The current direction is:
+
+- the creator opens the room
+- the creator issues a one-time invite
+- one invite is intended for one participant
+- invites expire
+- invites can be revoked
+- the creator can remove connected participants from the room
+
+This is a better model than a permanent share link because a forwarded or stale invite should stop being useful quickly.
+
+## Security Posture
+
+This project should be judged against real adversarial conditions, not casual product marketing language.
+
+Contributors should think in terms of:
+
+- hostile infrastructure assumptions
+- metadata minimization
+- replay resistance
+- transcript authority
+- peer authentication
+- safe room destruction
+- low-friction mobile use under pressure
+
+If a feature improves convenience but expands retention, logging, observability, or recoverable history, it should be challenged hard.
+
+## What Still Matters After Single-Use Invites
+
+Single-use invites are a meaningful improvement, but they do not solve every problem.
+
+Risks that still remain:
+
+- text protocol v2 authenticates room and message metadata with AES-GCM and rejects duplicate IDs in the current page session; it does not authenticate a specific sender, protect file-event metadata, or retain replay state after refresh (see [protocol design](docs/message-protocol-v2.md))
+- if an invite is intercepted before the intended recipient redeems it, the first redeemer can still get in
+- if a device is compromised, screenshots, clipboard history, browser history, or malware can still expose the conversation
+- if a participant forwards plaintext, screenshots, or the room secret after joining, the protocol cannot stop human leakage
+- metadata still exists at the transport and endpoint level even when message content is encrypted
+- if the creator leaves a room open too long, exposure time grows even if invites are single-use
+
+Best practices after this change:
+
+- issue invites only when the recipient is ready to use them
+- keep invite lifetime short
+- revoke unused invites quickly
+- remove participants when they no longer need access
+- keep message expiry and room self-destruct aggressive
+- destroy the room as soon as the conversation is done
+- treat every endpoint as a possible weak point
+
+## What We Need Help With
+
+There is a lot of room for serious contribution.
+
+Priority contribution areas:
+
+- cryptographic review
+- protocol design
+- transcript sync and deduplication
+- mobile-first UX
+- accessibility under stress
+- file-transfer hardening (large files, resumability, backpressure)
+- WebSocket auto-reconnect and resync
+- traffic and metadata minimization
+- operational hardening
+- documentation and threat modeling
+
+If you want to contribute, open issues, propose design changes, audit assumptions, and submit patches. High standards are welcome.
+
+## Invitation
+
+This project is for people everywhere who believe private communication should be normal, understandable, and technically defensible.
+
+If you are a developer, designer, cryptographer, security researcher, or careful critic, contribute. Help make this amazing. Help make it safer. Help make it harder to abuse, harder to surveil, and easier to trust.
+
+## Repository Notes
+
+Recommended reading in this repository:
+
+- [docs/architecture.md](docs/architecture.md)
+- [docs/threat-model.md](docs/threat-model.md)
+- [docs/deploy-to-cloudflare-verification.md](docs/deploy-to-cloudflare-verification.md)
+- [docs/api-spec.md](docs/api-spec.md)
+- [docs/room-lifecycle.md](docs/room-lifecycle.md)
+- [docs/why-use-elm-chat.md](docs/why-use-elm-chat.md)
+- [docs/truly-private-messaging.md](docs/truly-private-messaging.md)
+
+## License
+
+elm.chat is free software licensed under the **[GNU Affero General Public License v3.0](LICENSE)**. AGPL is chosen deliberately: because this is a trust-minimizing tool, anyone who runs a *modified public* instance must make their modified source available to that instance's users (see Section 13 of the license). That keeps every deployment — including forks — honest and inspectable, which is the entire point of a private messenger.
+
+If you deploy a modified version as a network service, you must offer its users access to the corresponding source. Contributions are accepted under the same license; see [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## Acceptable use
+
+Privacy protects people; it is not a shield for abuse. See [docs/abuse-policy.md](docs/abuse-policy.md) for what is not allowed, what the architecture does and does not let anyone see, and how to report a problem. Self-hosters are the operators of their own instances and are responsible for acceptable use and local-law compliance.
+
+## Disclaimer
+
+Do not market or rely on this project as a completed high-assurance safety tool until its protocol, implementation, and operational guarantees have been independently reviewed and tested under realistic threat conditions.
+
+![elm.chat room interface](docs/images/chat-room-a.jpg)
+![elm.chat room interface alternate](docs/images/chat-room-b.jpg)
+![elm.chat room conversation view](docs/images/chat-room-c.jpg)

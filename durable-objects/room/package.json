@@ -1,0 +1,9 @@
+{
+  "name": "@elm-chat/room-do",
+  "version": "0.1.2",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@elm-chat/shared": "*"
+  }
+}
